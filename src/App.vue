@@ -2,6 +2,22 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <table>
+      <thead>
+        <tr>
+          <th v-for="(header, i) in items[0]" :key="i">
+            {{ header }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(row, i) in data" :key="i">
+          <td v-for="(item, j) in row" :key="j">
+            {{ item }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -14,6 +30,22 @@ export default Vue.extend({
   components: {
     HelloWorld
   },
+  data() {
+    return {
+      headers: ["ID", "Code", "Name"],
+      items: [
+        ["ID", "Code", "Name"],
+        [1, "4368", "扶桑化学"],
+        [2, "9985", "ソフトバンク"]
+      ]
+    };
+  },
+  computed: {
+    data() {
+      // @ts-ignore
+      return this.items.slice(1);
+    }
+  }
 });
 </script>
 
