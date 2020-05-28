@@ -17,22 +17,6 @@ export default Vue.extend({
     QuerySelector,
     TableView,
   },
-  data() {
-    return {
-      headers: ['ID', 'Code', 'Name'],
-      items: [
-        ['ID', 'Code', 'Name'],
-        [1, '4368', '扶桑化学'],
-        [2, '9985', 'ソフトバンク'],
-      ],
-    };
-  },
-  computed: {
-    data() {
-      // @ts-ignore
-      return this.items.slice(1);
-    },
-  },
 });
 </script>
 
