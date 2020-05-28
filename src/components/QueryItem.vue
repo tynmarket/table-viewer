@@ -4,9 +4,17 @@
       クエリ
       <input v-model="column" type="txt" />
       <select v-model="operator">
-        <!-- TODO 演算子追加 -->
         <option value="=">=</option>
-        <option value="!=">!=</option>
+        <option value="!=">≠</option>
+        <option value=">">&gt;</option>
+        <option value="<">&lt;</option>
+        <option value=">=">≧</option>
+        <option value="<=">≦</option>
+        <option value="IN">IN</option>
+        <option value="LIKE">LIKE</option>
+        <option value="BETWEEN">BETWEEN</option>
+        <option value="IS NULL">IS NULL</option>
+        <option value="IS NOT NULL">IS NOT NULL</option>
       </select>
       <input v-model="val" type="txt" />
     </label>
