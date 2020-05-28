@@ -4,12 +4,14 @@
       クエリ
       <input v-model="column" type="txt" />
       <select v-model="operator">
+        <!-- TODO 演算子追加 -->
         <option value="=">=</option>
         <option value="!=">!=</option>
       </select>
       <input v-model="val" type="txt" />
     </label>
-    <button v-on:click="addQuery">＋</button>
+    <button v-if="newItem" v-on:click="addQuery">＋</button>
+    <button v-else v-on:click="deleteQuery(index)">-</button>
   </div>
 </template>
 
@@ -27,10 +29,13 @@ type DataType = QueryString;
 interface MethodType {
   queryString: () => QueryString;
   addQuery: () => void;
+  deleteQuery: (index: number) => void;
 }
 interface ComputedType {}
 interface PropType {
   value: QueryString;
+  newItem: boolean;
+  index: number;
 }
 
 export default Vue.extend({
@@ -39,6 +44,12 @@ export default Vue.extend({
     value: {
       type: Object,
       required: true,
+    },
+    newItem: {
+      type: Boolean,
+    },
+    index: {
+      type: Number,
     },
   },
   data() {
@@ -70,6 +81,9 @@ export default Vue.extend({
       this.operator = '=';
       this.val = '';
       this.$emit('add-query', query);
+    },
+    deleteQuery(index: number) {
+      this.$emit('delete-query', index);
     },
   },
 } as ThisTypedComponentOptionsWithRecordProps<Vue, DataType, MethodType, ComputedType, PropType>);

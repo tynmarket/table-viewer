@@ -7,9 +7,17 @@
       </label>
       <button v-on:click="search">検索</button>
     </div>
-    <QueryItem v-model="newQuery" v-on:add-query="addQuery"></QueryItem>
-    <div v-for="(query, i) in queries" :key="i">
-      <QueryItem v-model="query.value" v-on:add-query="addQuery"></QueryItem>
+    <QueryItem
+      v-model="newQuery"
+      v-bind:newItem="true"
+      v-on:add-query="addQuery"
+    ></QueryItem>
+    <div v-for="(query, i) in queries" :key="query.value.val">
+      <QueryItem
+        v-model="query.value"
+        v-bind:index="i"
+        v-on:delete-query="deleteQuery"
+      ></QueryItem>
     </div>
   </div>
 </template>
@@ -35,6 +43,7 @@ interface DataType {
 interface MethodType {
   search: () => void;
   addQuery: () => void;
+  deleteQuery: (index: number) => void;
   whereQuery: () => string;
 }
 interface ComputedType {}
@@ -62,16 +71,35 @@ export default Vue.extend({
       console.log(`table: ${this.table}`);
       console.log(`query: ${this.whereQuery()}`);
     },
+
     addQuery(query: QueryString) {
-      this.queries.push({
-        value: {
-          column: query.column,
-          operator: query.operator,
-          val: query.val,
+      const queries = [
+        ...this.queries,
+        {
+          value: {
+            column: query.column,
+            operator: query.operator,
+            val: query.val,
+          },
         },
-      });
-      // TODO 親側からクリアできない？
+      ];
+      this.queries = queries;
+      // TODO 親側からnewQueryをクリアできない？
     },
+
+    deleteQuery(index: number) {
+      const len = this.queries.length + 1;
+      const queries = [
+        ...this.queries.slice(0, index),
+        ...this.queries.slice(index + 1, len),
+      ];
+      queries.forEach((value: Query) => {
+        const query = value.value;
+        console.log(`${query.column} ${query.operator} ${query.val}`);
+      });
+      this.queries = queries;
+    },
+
     whereQuery: function(): string {
       if (this.queries.length > 0) {
         return this.queries
