@@ -9,7 +9,7 @@
       </select>
       <input v-model="val" type="txt" />
     </label>
-    <button>＋</button>
+    <button v-on:click="addQuery">＋</button>
   </div>
 </template>
 
@@ -24,7 +24,10 @@ interface QueryString {
 }
 
 type DataType = QueryString;
-interface MethodType {}
+interface MethodType {
+  queryString: () => QueryString;
+  addQuery: () => void;
+}
 interface ComputedType {}
 interface PropType {
   value: QueryString;
@@ -51,11 +54,23 @@ export default Vue.extend({
     this.val = this.value.val;
   },
   updated() {
-    this.$emit('input', {
-      column: this.column,
-      operator: this.operator,
-      val: this.val,
-    });
+    this.$emit('input', this.queryString());
+  },
+  methods: {
+    queryString(): QueryString {
+      return {
+        column: this.column,
+        operator: this.operator,
+        val: this.val,
+      };
+    },
+    addQuery() {
+      const query = this.queryString();
+      this.column = '';
+      this.operator = '=';
+      this.val = '';
+      this.$emit('add-query', query);
+    },
   },
 } as ThisTypedComponentOptionsWithRecordProps<Vue, DataType, MethodType, ComputedType, PropType>);
 </script>

@@ -7,8 +7,9 @@
       </label>
       <button v-on:click="search">検索</button>
     </div>
+    <QueryItem v-model="newQuery" v-on:add-query="addQuery"></QueryItem>
     <div v-for="(query, i) in queries" :key="i">
-      <QueryItem v-model="query.value"></QueryItem>
+      <QueryItem v-model="query.value" v-on:add-query="addQuery"></QueryItem>
     </div>
   </div>
 </template>
@@ -28,6 +29,7 @@ type Query = { value: QueryString };
 
 interface DataType {
   table: string;
+  newQuery: QueryString;
   queries: Query[];
 }
 interface MethodType {
@@ -47,21 +49,28 @@ export default Vue.extend({
   data() {
     return {
       table: null,
-      queries: [
-        {
-          value: {
-            column: 'a',
-            operator: '!=',
-            val: 'c',
-          },
-        },
-      ],
+      newQuery: {
+        column: '',
+        operator: '=',
+        val: '',
+      },
+      queries: [],
     };
   },
   methods: {
     search() {
       console.log(`table: ${this.table}`);
       console.log(`query: ${this.whereQuery()}`);
+    },
+    addQuery(query: QueryString) {
+      this.queries.push({
+        value: {
+          column: query.column,
+          operator: query.operator,
+          val: query.val,
+        },
+      });
+      // TODO 親側からクリアできない？
     },
     whereQuery: function(): string {
       if (this.queries.length > 0) {
