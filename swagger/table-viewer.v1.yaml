@@ -11,8 +11,8 @@ servers:
   - url: 'http://localhost:3000/v1'
 paths:
   /select:
-    get:
-      summary: Your GET endpoint
+    post:
+      summary: Your POST endpoint
       tags:
         - query
       responses:
@@ -35,7 +35,7 @@ paths:
                         items:
                           $ref: '#/components/schemas/Record'
               examples:
-                example-1:
+                response:
                   value:
                     data:
                       header:
@@ -51,28 +51,33 @@ paths:
                           - ソフトバンク
       operationId: get-select
       description: 対象のテーブルに対してSELECTクエリを実行した結果を取得する
-      parameters:
-        - schema:
-            type: string
-            example: disclosures
-          in: query
-          name: table
-          required: true
-        - schema:
-            type: array
-            example:
-              - column: id
-                operator: '>='
-                value: '1'
-            items:
-              $ref: '#/components/schemas/WhereQuery'
-          in: query
-          name: where
-        - schema:
-            type: string
-            example: DESC
-          in: query
-          name: order
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                table:
+                  type: string
+                where:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/WhereQuery'
+                order:
+                  type: string
+              required:
+                - table
+            examples:
+              body:
+                value:
+                  table: disclosures
+                  where:
+                    - column: id
+                      operator: '>'
+                      value: '1'
+                  order: DESC
+        description: ''
 components:
   schemas:
     WhereQuery:
