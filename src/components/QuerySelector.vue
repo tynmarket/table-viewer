@@ -19,11 +19,21 @@
         v-on:delete-query="deleteQuery"
       ></QueryItem>
     </div>
+    <div>
+      <label>
+        ORDER BY id
+        <select v-model="order">
+          <option value="ASC">ASC</option>
+          <option value="DESC">DESC</option>
+        </select>
+      </label>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import axios from 'axios';
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options';
 import QueryItem from './QueryItem.vue';
 
@@ -35,16 +45,34 @@ interface QueryString {
 
 type Query = { value: QueryString };
 
+interface QueryParam {
+  table: string;
+  where: QueryString[];
+  order: string;
+}
+
+interface ResponseData {
+  data: {
+    header: string[];
+    record: (string | number | boolean | null)[][];
+  };
+}
+
 interface DataType {
   table: string;
   newQuery: QueryString;
   queries: Query[];
+  order: string;
 }
 interface MethodType {
   search: () => void;
   addQuery: () => void;
   deleteQuery: (index: number) => void;
-  whereQuery: () => string;
+  whereQueryString: () => string;
+  sendQuery: () => Promise<ResponseData>;
+  buildQuery: () => QueryParam;
+  whereQuery: () => QueryString[];
+  orderQuery: () => string;
 }
 interface ComputedType {}
 interface PropType {}
@@ -64,12 +92,15 @@ export default Vue.extend({
         val: '',
       },
       queries: [],
+      order: 'ASC',
     };
   },
   methods: {
     search() {
       console.log(`table: ${this.table}`);
-      console.log(`query: ${this.whereQuery()}`);
+      console.log(`query: ${this.whereQueryString()}`);
+      console.log(`order: ${this.orderQuery()}`);
+      this.sendQuery();
     },
 
     addQuery(query: QueryString) {
@@ -100,7 +131,30 @@ export default Vue.extend({
       this.queries = queries;
     },
 
-    whereQuery: function(): string {
+    async sendQuery(): Promise<ResponseData | null> {
+      const body = this.buildQuery();
+
+      try {
+        const response = await axios.post('/v1/select', body);
+        return response.data;
+      } catch (error) {
+        return null;
+      }
+    },
+
+    buildQuery(): QueryParam {
+      return {
+        table: this.table,
+        where: this.whereQuery(),
+        order: this.order,
+      };
+    },
+
+    whereQuery(): QueryString[] {
+      return this.queries.map((query: Query): QueryString => query.value);
+    },
+
+    whereQueryString(): string {
       if (this.queries.length > 0) {
         return this.queries
           .map((query: Query): string => {
@@ -111,6 +165,10 @@ export default Vue.extend({
       } else {
         return '';
       }
+    },
+
+    orderQuery(): string {
+      return `ORDER BY id ${this.order}`;
     },
   },
 } as ThisTypedComponentOptionsWithRecordProps<Vue, DataType, MethodType, ComputedType, PropType>);
