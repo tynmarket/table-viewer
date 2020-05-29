@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: select query
+  version: '1.0'
+  description: Select query endpoint for table-viewer
+  contact:
+    name: tynmarket
+    email: tynmarket@gmail.com
+    url: 'https://tyn-imarket.com/'
+servers:
+  - url: 'http://localhost:3000/v1'
+paths:
+  /select:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - query
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      hader:
+                        type: array
+                        items:
+                          type: string
+                      records:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Record'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      header:
+                        - id
+                        - code
+                        - name
+                      records:
+                        - - 1
+                          - '4368'
+                          - 扶桑化学
+                        - - 2
+                          - '9985'
+                          - ソフトバンク
+      operationId: get-select
+      description: 対象のテーブルに対してSELECTクエリを実行した結果を取得する
+      parameters:
+        - schema:
+            type: string
+            example: disclosures
+          in: query
+          name: table
+          required: true
+        - schema:
+            type: array
+            example:
+              - column: id
+                operator: '>='
+                value: '1'
+            items:
+              $ref: '#/components/schemas/WhereQuery'
+          in: query
+          name: where
+        - schema:
+            type: string
+            example: DESC
+          in: query
+          name: order
+components:
+  schemas:
+    WhereQuery:
+      title: WhereQuery
+      type: object
+      properties:
+        column:
+          type: string
+        operator:
+          type: string
+        value:
+          type: string
+      required:
+        - column
+        - operator
+    Record:
+      title: Record
+      type: array
+      items:
+        anyOf:
+          - type: string
+          - type: number
+          - type: boolean
+  securitySchemes: {}
+tags:
+  - name: query
+    description: SQLのクエリ
