@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/tynmarket/table-viewer/model"
 )
 
 type selectParam struct {
@@ -30,6 +31,17 @@ func Select(c *gin.Context) {
 			return
 		}
 		fmt.Printf("param: %v", json)
-		c.JSON(http.StatusOK, gin.H{"param": json})
+
+		rows, err := db.Table(json.Table).Order("id asc").Select("*").Rows()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"select error": err.Error()})
+		}
+
+		records, err := model.Records(rows)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"rows to records": err.Error()})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"data": records})
 	})
 }

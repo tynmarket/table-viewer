@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 	"time"
@@ -25,6 +26,46 @@ type Model struct {
 // Db is
 func Db() (*gorm.DB, error) {
 	return gorm.Open("mysql", url)
+}
+
+// Records is
+func Records(rows *sql.Rows) ([][]string, error) {
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	rawResult := make([][]byte, len(cols))
+	dest := make([]interface{}, len(cols))
+	records := make([][]string, 0, 1000)
+
+	for i := range rawResult {
+		dest[i] = &rawResult[i]
+	}
+
+	for rows.Next() {
+		result := make([]string, len(cols))
+
+		err = rows.Scan(dest...)
+		if err != nil {
+			fmt.Println("Failed to scan row", err)
+			return nil, err
+		}
+
+		for i, raw := range rawResult {
+			if raw == nil {
+				result[i] = "NULL"
+			} else {
+				result[i] = string(raw)
+			}
+		}
+
+		records = append(records, result)
+
+		fmt.Printf("%#v\n", result)
+	}
+
+	return records, nil
 }
 
 func init() {
