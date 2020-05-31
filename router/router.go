@@ -7,7 +7,7 @@ import (
 
 // Route is
 func Route(r *gin.Engine) *gin.Engine {
-	r.GET("/select", controller.Select)
+	r.POST("/select", controller.Select)
 
 	return r
 }

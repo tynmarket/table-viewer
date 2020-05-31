@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql" // blank import
 )
 
-var host = os.Getenv("HOST")
-var database = os.Getenv("DATABASE")
-var user = os.Getenv("USER")
-var password = os.Getenv("PASSWORD")
+var user = os.Getenv("DB_USER")
+var password = os.Getenv("DB_PASSWORD")
+var host = os.Getenv("DB_HOST")
+var database = os.Getenv("DB_NAME")
 var url string
 
 // Model is
