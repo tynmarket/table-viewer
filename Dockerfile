@@ -12,6 +12,7 @@ RUN apk upgrade --no-cache && \
       yarn \
       tzdata \
       bash \
-      less
+      less \
+      git && \
 
 ENV TZ Asia/Tokyo
