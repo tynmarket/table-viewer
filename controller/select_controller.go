@@ -10,29 +10,28 @@ import (
 )
 
 type selectParam struct {
-	Table        string       `json:"table" binding:"required"`
-	WhereQueries []whereQuery `json:"where"`
-	Order        string       `json:"order"`
-}
-
-type whereQuery struct {
-	Column   string `json:"column" binding:"required"`
-	Operator string `json:"operator" binding:"required"`
-	Value    string `json:"value"`
+	Table        string             `json:"table" binding:"required"`
+	WhereQueries []model.WhereQuery `json:"where"`
+	Order        string             `json:"order"`
 }
 
 // Select is
 func Select(c *gin.Context) {
 	handle(c, func(db *gorm.DB) {
-		var json selectParam
-		if err := c.ShouldBindJSON(&json); err != nil {
+		var param selectParam
+		if err := c.ShouldBindJSON(&param); err != nil {
 			fmt.Printf("error: %s", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		fmt.Printf("param: %v", json)
 
-		rows, err := db.Table(json.Table).Order("id asc").Select("*").Rows()
+		fmt.Printf("\nparam: %v\n", param)
+
+		rows, err := model.
+			BuildQuery(db, param.Table, param.WhereQueries, param.Order).
+			Select("*").
+			Rows()
+
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"select error": err.Error()})
 		}

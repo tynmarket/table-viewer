@@ -62,7 +62,7 @@ func Records(rows *sql.Rows) ([][]string, error) {
 
 		records = append(records, result)
 
-		fmt.Printf("%#v\n", result)
+		//fmt.Printf("%#v\n", result)
 	}
 
 	return records, nil
