@@ -59,9 +59,12 @@ export default Vue.extend({
       console.log('updateQuery');
       console.log(query);
       try {
-        const response = await axios.post<ResponseData>('/select', query);
+        const response = await axios.post<ResponseData>('/api/select', query);
+        console.log('header');
+        console.log(response.data.data.header);
         console.log('records');
-        console.log(response.data.data);
+        console.log(response.data.data.records);
+        this.header = response.data.data.header;
         this.records = response.data.data.records;
       } catch (error) {
         return null;

@@ -7,9 +7,12 @@ if (!proxy) {
 module.exports = {
   devServer: {
     proxy: {
-      '/select': {
+      '/api': {
         target: `http://${proxy}:8080`,
         changeOrigin: true,
+        pathRewrite: {
+          '^/api': '/',
+        },
       },
     },
   },
