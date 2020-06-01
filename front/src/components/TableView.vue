@@ -21,30 +21,24 @@
 import Vue from 'vue';
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options';
 
-interface DataType {
-  allRecords: (string | number)[][];
-}
+interface DataType {}
 interface MethodType {}
 interface ComputedType {}
-interface PropType {}
+interface PropType {
+  header: string[];
+  records: string[][];
+}
 
 export default Vue.extend({
   name: 'TableView',
-  data() {
-    return {
-      allRecords: [
-        ['id', 'code', 'name'],
-        [1, '4368', '扶桑化学'],
-        [2, '9985', 'ソフトバンク'],
-      ],
-    };
-  },
-  computed: {
-    header() {
-      return this.allRecords[0];
+  props: {
+    header: {
+      type: Array,
+      default: [],
     },
-    records() {
-      return this.allRecords.slice(1);
+    records: {
+      type: Array,
+      default: [],
     },
   },
 } as ThisTypedComponentOptionsWithRecordProps<Vue, DataType, MethodType, ComputedType, PropType>);

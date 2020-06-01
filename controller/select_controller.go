@@ -25,7 +25,7 @@ func Select(c *gin.Context) {
 			return
 		}
 
-		fmt.Printf("\nparam: %v\n", param)
+		fmt.Printf("\nparam: %#v\n", param)
 
 		rows, err := model.
 			BuildQuery(db, param.Table, param.WhereQueries, param.Order).
@@ -40,6 +40,8 @@ func Select(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"rows to records": err.Error()})
 		}
+
+		fmt.Printf("\n%d rows returned\n\n", len(records)-1)
 
 		c.JSON(http.StatusOK, gin.H{"data": records})
 	})

@@ -33,7 +33,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import axios from 'axios';
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options';
 import QueryItem from './QueryItem.vue';
 
@@ -51,13 +50,6 @@ interface QueryParam {
   order: string;
 }
 
-interface ResponseData {
-  data: {
-    header: string[];
-    record: (string | number | boolean | null)[][];
-  };
-}
-
 interface DataType {
   table: string;
   newQuery: QueryString;
@@ -69,7 +61,6 @@ interface MethodType {
   addQuery: () => void;
   deleteQuery: (index: number) => void;
   whereQueryString: () => string;
-  sendQuery: () => Promise<ResponseData>;
   buildQuery: () => QueryParam;
   whereQuery: () => QueryString[];
   orderQuery: () => string;
@@ -100,7 +91,8 @@ export default Vue.extend({
       console.log(`table: ${this.table}`);
       console.log(`query: ${this.whereQueryString()}`);
       console.log(`order: ${this.orderQuery()}`);
-      this.sendQuery();
+      const query = this.buildQuery();
+      this.$emit('update-query', query);
     },
 
     addQuery(query: QueryString) {
@@ -129,17 +121,6 @@ export default Vue.extend({
         console.log(`${query.column} ${query.operator} ${query.val}`);
       });
       this.queries = queries;
-    },
-
-    async sendQuery(): Promise<ResponseData | null> {
-      const body = this.buildQuery();
-
-      try {
-        const response = await axios.post('/v1/select', body);
-        return response.data;
-      } catch (error) {
-        return null;
-      }
     },
 
     buildQuery(): QueryParam {
