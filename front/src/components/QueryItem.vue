@@ -1,25 +1,35 @@
 <template>
-  <div>
-    <label>
-      クエリ
-      <input v-model="column" type="txt" />
-      <select v-model="operator">
-        <option value="=">=</option>
-        <option value="!=">≠</option>
-        <option value=">">&gt;</option>
-        <option value="<">&lt;</option>
-        <option value=">=">≧</option>
-        <option value="<=">≦</option>
-        <option value="IN">IN</option>
-        <option value="LIKE">LIKE</option>
-        <option value="BETWEEN">BETWEEN</option>
-        <option value="IS NULL">IS NULL</option>
-        <option value="IS NOT NULL">IS NOT NULL</option>
-      </select>
-      <input v-model="val" type="txt" />
-    </label>
-    <button v-if="newItem" v-on:click="addQuery">＋</button>
-    <button v-else v-on:click="deleteQuery(index)">-</button>
+  <div class="field is-grouped">
+    <p class="control">
+      <label class="label">WHERE</label>
+    </p>
+    <p class="control">
+      <input v-model="column" type="txt" class="input" />
+    </p>
+    <p class="control">
+      <span class="select">
+        <select v-model="operator">
+          <option value="=">=</option>
+          <option value="!=">≠</option>
+          <option value=">">&gt;</option>
+          <option value="<">&lt;</option>
+          <option value=">=">≧</option>
+          <option value="<=">≦</option>
+          <option value="IN">IN</option>
+          <option value="LIKE">LIKE</option>
+          <option value="BETWEEN">BETWEEN</option>
+          <option value="IS NULL">IS NULL</option>
+          <option value="IS NOT NULL">IS NOT NULL</option>
+        </select>
+      </span>
+    </p>
+    <p class="control">
+      <input v-model="val" type="txt" class="input" />
+    </p>
+    <p class="control">
+      <button v-if="newItem" v-on:click="addQuery" class="button">＋</button>
+      <button v-else v-on:click="deleteQuery(index)" class="button">-</button>
+    </p>
   </div>
 </template>
 

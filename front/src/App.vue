@@ -1,6 +1,5 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
+  <div id="app" class="container">
     <QuerySelector v-on:update-query="updateQuery" />
     <TableView v-bind:header="header" v-bind:records="records" />
   </div>
@@ -101,7 +100,7 @@ export default Vue.extend({
 } as ThisTypedComponentOptionsWithRecordProps<Vue, DataType, MethodType, ComputedType, PropType>);
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

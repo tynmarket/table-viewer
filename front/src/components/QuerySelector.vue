@@ -1,11 +1,21 @@
 <template>
   <div>
-    <div>
-      <label>
-        テーブル名
-        <input v-model="table" type="txt" />
-      </label>
-      <button v-on:click="search">検索</button>
+    <div class="field is-grouped">
+      <p class="control">
+        <label class="label">テーブル名</label>
+      </p>
+      <p class="control">
+        <input
+          v-model="table"
+          v-on:keyup.enter="search"
+          v-focus
+          type="txt"
+          class="input"
+        />
+      </p>
+      <p class="control">
+        <button v-on:click="search" class="button">検索</button>
+      </p>
     </div>
     <QueryItem
       v-model="newQuery"
@@ -19,14 +29,18 @@
         v-on:delete-query="deleteQuery"
       ></QueryItem>
     </div>
-    <div>
-      <label>
-        ORDER BY id
-        <select v-model="order">
-          <option value="ASC">ASC</option>
-          <option value="DESC">DESC</option>
-        </select>
-      </label>
+    <div class="field is-grouped">
+      <p class="control">
+        <label class="label">ORDER BY id</label>
+      </p>
+      <p class="control">
+        <span class="select">
+          <select v-model="order">
+            <option value="ASC">ASC</option>
+            <option value="DESC">DESC</option>
+          </select>
+        </span>
+      </p>
     </div>
   </div>
 </template>
