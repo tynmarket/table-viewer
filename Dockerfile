@@ -1,5 +1,9 @@
 # docker build -t tynmarket/table-viewer .
 # docker run --env AUTH_USER --env AUTH_PASSWORD -p 80:80 --name viewer --rm -it tynmarket/table-viewer
+# gcloud run deploy table-viewer \
+#   --platform managed \
+#   --image gcr.io/tynmarket-195002/github-tynmarket-table-viewer \
+#   --set-env-vars="DB_USER=imarket,DB_HOST=$DB_HOST,DB_PASSWORD=$DB_PASSWORD,DB_NAME=$DB_NAME,AUTH_USER=$AUTH_USER,AUTH_PASSWORD=$AUTH_PASSWORD"
 
 FROM golang:1.14-alpine3.11
 
