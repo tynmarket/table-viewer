@@ -21,6 +21,7 @@ RUN apk upgrade --no-cache && \
     mkdir /run/nginx
 
 ENV TZ Asia/Tokyo
+ENV SERVER_PORT 8081
 
 COPY . /app
 COPY nginx/nginx.conf /etc/nginx
