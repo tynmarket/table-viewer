@@ -1,5 +1,5 @@
 # docker build -t tynmarket/table-viewer .
-# docker run -p 81:80 --name viewer --rm -it tynmarket/table-viewer
+# docker run --env AUTH_USER --env AUTH_PASSWORD -p 80:80 --name viewer --rm -it tynmarket/table-viewer
 
 FROM golang:1.14-alpine
 
@@ -8,7 +8,7 @@ WORKDIR /app
 RUN apk upgrade --no-cache && \
     apk add --update --no-cache \
       nginx \
-      logrotate \
+      openssl \
       mysql-client \
       mariadb-connector-c-dev \
       nodejs \

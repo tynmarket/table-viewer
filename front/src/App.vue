@@ -35,6 +35,8 @@ interface ResponseData {
 interface DataType {
   header: string[];
   records: string[][];
+  authUser: string;
+  authPassword: string;
 }
 interface MethodType {
   updateQuery: (query: QueryParam) => void;
@@ -52,14 +54,39 @@ export default Vue.extend({
     return {
       header: [],
       records: [],
+      authUser: '',
+      authPassword: '',
     };
+  },
+  mounted() {
+    const paramStr = location.href.split('?');
+
+    if (paramStr[1]) {
+      const params = new URLSearchParams(paramStr[1]);
+      const user = params.get('user');
+      const password = params.get('password');
+
+      if (user) {
+        this.authUser = user;
+      }
+      if (password) {
+        this.authPassword = password;
+      }
+    }
   },
   methods: {
     async updateQuery(query: QueryParam) {
       console.log('updateQuery');
       console.log(query);
       try {
-        const response = await axios.post<ResponseData>('/api/select', query);
+        const auth = {
+          auth: { username: this.authUser, password: this.authPassword },
+        };
+        const response = await axios.post<ResponseData>(
+          '/api/select',
+          query,
+          auth
+        );
         console.log('header');
         console.log(response.data.data.header);
         console.log('records');

@@ -16,6 +16,8 @@ services:
       DB_USER: root
       DB_NAME: imarket_development
       DB_HOST: db
+      AUTH_USER: # Need to set.
+      AUTH_PASSWORD: # Need to set.
     ports:
       - "80:80"
     depends_on:
