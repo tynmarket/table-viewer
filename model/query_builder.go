@@ -20,5 +20,5 @@ func BuildQuery(db *gorm.DB, table string, wheres []WhereQuery, order string) *g
 		order = "ASC"
 	}
 
-	return db.Order("id " + order)
+	return db.Order("id " + order).Limit(1000)
 }
