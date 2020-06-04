@@ -17,15 +17,12 @@
         <button v-on:click="search" class="button">検索</button>
       </p>
     </div>
-    <QueryItem
-      v-model="newQuery"
-      v-bind:newItem="true"
-      v-on:add-query="addQuery"
-    ></QueryItem>
-    <div v-for="(query, i) in queries" :key="query.value.val">
+    <div v-for="(query, i) in queries" :key="query.key" class="field">
       <QueryItem
         v-model="query.value"
         v-bind:index="i"
+        v-bind:newItem="i == 0"
+        v-on:add-query="addQuery"
         v-on:delete-query="deleteQuery"
       ></QueryItem>
     </div>
@@ -56,7 +53,7 @@ interface QueryString {
   val: string;
 }
 
-type Query = { value: QueryString };
+type Query = { value: QueryString; key: string };
 
 interface QueryParam {
   table: string;
@@ -66,7 +63,6 @@ interface QueryParam {
 
 interface DataType {
   table: string;
-  newQuery: QueryString;
   queries: Query[];
   order: string;
 }
@@ -77,10 +73,28 @@ interface MethodType {
   whereQueryString: () => string;
   buildQuery: () => QueryParam;
   whereQuery: () => QueryString[];
+  validQueries: () => Query[];
   orderQuery: () => string;
 }
 interface ComputedType {}
 interface PropType {}
+
+const generateKey = (): string => {
+  return Math.random()
+    .toString(32)
+    .substring(2);
+};
+
+const newQuery = (): Query => {
+  return {
+    value: {
+      column: '',
+      operator: '=',
+      val: '',
+    },
+    key: generateKey(),
+  };
+};
 
 export default Vue.extend({
   name: 'QuerySelector',
@@ -91,12 +105,7 @@ export default Vue.extend({
   data() {
     return {
       table: null,
-      newQuery: {
-        column: '',
-        operator: '=',
-        val: '',
-      },
-      queries: [],
+      queries: [newQuery()],
       order: 'ASC',
     };
   },
@@ -111,25 +120,22 @@ export default Vue.extend({
 
     addQuery(query: QueryString) {
       const queries = [
-        ...this.queries,
+        newQuery(),
+        ...this.queries.slice(1),
         {
-          value: {
-            column: query.column,
-            operator: query.operator,
-            val: query.val,
-          },
+          value: query,
+          key: generateKey(),
         },
       ];
       this.queries = queries;
-      // TODO 親側からnewQueryをクリアできない？
     },
 
     deleteQuery(index: number) {
-      const len = this.queries.length + 1;
-      const queries = [
-        ...this.queries.slice(0, index),
-        ...this.queries.slice(index + 1, len),
-      ];
+      const queries = this.queries.filter(
+        (query: Query, i: number): boolean => {
+          return i != index;
+        }
+      );
       queries.forEach((value: Query) => {
         const query = value.value;
         console.log(`${query.column} ${query.operator} ${query.val}`);
@@ -146,12 +152,21 @@ export default Vue.extend({
     },
 
     whereQuery(): QueryString[] {
-      return this.queries.map((query: Query): QueryString => query.value);
+      return this.validQueries().map(
+        (query: Query): QueryString => query.value
+      );
+    },
+
+    validQueries(): Query[] {
+      return this.queries.filter((query: Query): boolean => {
+        return query.value.column != '';
+      });
     },
 
     whereQueryString(): string {
-      if (this.queries.length > 0) {
-        return this.queries
+      const queries = this.validQueries();
+      if (queries.length > 0) {
+        return queries
           .map((query: Query): string => {
             const value = query.value;
             return `${value.column} ${value.operator} ${value.val}`;
